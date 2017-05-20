@@ -230,7 +230,7 @@ public class PropertyChangeUtils
      * for removing the given listener failed.
      * @throws NullPointerException If any argument is <code>null</code>
      */
-    static void tryAddNamedPropertyChangeListenerUnchecked(
+    public static void tryAddNamedPropertyChangeListenerUnchecked(
         Object target, String propertyName, 
         PropertyChangeListener propertyChangeListener)
     {
@@ -293,7 +293,7 @@ public class PropertyChangeUtils
      * for removing the given listener failed.
      * @throws NullPointerException If any argument is <code>null</code>
      */
-    static void tryRemoveNamedPropertyChangeListenerUnchecked(
+    public static void tryRemoveNamedPropertyChangeListenerUnchecked(
         Object target, String propertyName, 
         PropertyChangeListener propertyChangeListener)
     {
