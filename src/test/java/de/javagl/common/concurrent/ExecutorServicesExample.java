@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * A simple integration test for the {@link ExecutorServices}
  */
 @SuppressWarnings("javadoc")
-public class ExecutorServicesTest
+public class ExecutorServicesExample
 {
     public static void main(String[] args)
     {

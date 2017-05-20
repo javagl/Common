@@ -19,7 +19,7 @@ import de.javagl.common.beans.ExampleBean.ExampleBeanEnum;
  * A simple integration test for the {@link VerboseXmlEncoder}
  */
 @SuppressWarnings("javadoc")
-public class VerboseXmlEncoderTest
+public class VerboseXmlEncoderExample
 {
     public static void main(String[] args)
     {
