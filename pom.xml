@@ -10,7 +10,7 @@
 
     <groupId>de.javagl</groupId>
     <artifactId>common</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
 
     <name>common</name>
     <description>Common utility classes for the javagl libraries</description>
