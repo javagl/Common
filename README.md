@@ -14,9 +14,9 @@ and are not intended to be used by third party libraries.
 
 # Change log:
 
-Version 0.0.3-SNAPSHOT:
+Version 0.0.3, 2020-01-08:
 
-* ...
+* Added various utility classes to be used internally
 
 Version 0.0.2:
 
