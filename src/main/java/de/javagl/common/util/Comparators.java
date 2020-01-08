@@ -36,6 +36,18 @@ import java.util.Map;
 public class Comparators
 {
     /**
+     * Returns a comparator that compares numbers based on their double value.
+     * 
+     * @param <T> The element type
+     * 
+     * @return The comparator
+     */
+    public static <T extends Number> Comparator<T> forNumbers()
+    {
+        return (t0, t1) -> Double.compare(t0.doubleValue(), t1.doubleValue());
+    }
+    
+    /**
      * Creates a comparator that compares strings according to the given order.
      * The strings of the given order and the strings to be compared will be
      * converted to lower case before they are compared. Strings that are

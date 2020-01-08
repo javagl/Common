@@ -28,18 +28,133 @@ package de.javagl.common.collections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+
+import de.javagl.common.util.Comparators;
 
 /**
  * Utility methods related to maps
  */
 public class Maps
 {
+    /**
+     * Combine the given maps, by merging their key sets to obtain the key
+     * set of the result list, and collecting all values from the given
+     * input maps into lists.
+     * 
+     * @param <K> The key type
+     * @param <V> The value type
+     * 
+     * @param maps The input maps
+     * @return The resulting map
+     */
+    public static <K, V> Map<K, List<V>> combine(
+        Collection<? extends Map<? extends K, ? extends V>> maps)
+    {
+        Map<K, List<V>> result = new LinkedHashMap<K, List<V>>();
+        for (Map<? extends K, ? extends V> map : maps)
+        {
+            for (Entry<? extends K, ? extends V> entry : map.entrySet())
+            {
+                K k = entry.getKey();
+                V v = entry.getValue();
+                addToList(result, k, v);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Sorts the given map by the double value of the values
+     * 
+     * @param <K> The key type
+     * @param <V> The value type
+     * 
+     * @param map The input map
+     * @param ascending Whether the map should be sorted ascendingly
+     * @return The sorted map
+     */
+    public static <K, V extends Number> Map<K, V> sortByNumberValue(
+        Map<K, V> map, boolean ascending)
+    {
+        List<Entry<K, V>> entries = new ArrayList<Entry<K, V>>(map.entrySet());
+        
+        Comparator<Number> valueComparator = Comparators.forNumbers();
+        if (!ascending)
+        {
+            valueComparator = valueComparator.reversed();
+        }
+        Comparator<Entry<K, V>> comparator = 
+            Entry.comparingByValue(valueComparator);
+        Collections.sort(entries, comparator);
+        return fromEntries(entries);
+    }
+    
+    /**
+     * Creates a new map from the given sequence of entries
+     * 
+     * @param <K> The key type
+     * @param <V> The value type
+     * 
+     * @param entries The entries
+     * @return The map
+     */
+    public static <K, V> Map<K, V> fromEntries(
+        Iterable<? extends Entry<? extends K, ? extends V>> entries)
+    {
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Entry<? extends K, ? extends V> entry : entries)
+        {
+            K k = entry.getKey();
+            V v = entry.getValue();
+            result.put(k, v);
+        }
+        return result;
+    }
+    
+    /**
+     * Transform the keys and values of the given map with the given 
+     * functions, and return the result as a new map. If the given
+     * key transform functions maps multiple input keys to the same
+     * output key, then the output key will be mapped to the last
+     * output value that was computed.
+     * 
+     * @param <KI> The input key type
+     * @param <VI> The input value type
+     * @param <KO> The output key type
+     * @param <VO> The output value type
+     * 
+     * @param map The input map
+     * @param keyTransform The key transform
+     * @param valueTransform The value transform
+     * @return The resulting map
+     */
+    public static <KI, VI, KO, VO> Map<KO, VO> transform(
+        Map<KI, VI> map, 
+        Function<? super KI, ? extends KO> keyTransform,
+        Function<? super VI, ? extends VO> valueTransform)
+    {
+        Map<KO, VO> result = new LinkedHashMap<KO, VO>();
+        for (Entry<KI, VI> entry : map.entrySet())
+        {
+            KI ki = entry.getKey();
+            VI vi = entry.getValue();
+            KO ko = keyTransform.apply(ki);
+            VO vo = valueTransform.apply(vi);
+            result.put(ko, vo);
+        }
+        return result;
+    }
+    
+    
     /**
      * Increments the value that is stored for the given key in the given
      * map by one, or sets it to 1 if there was no value stored for the
