@@ -28,6 +28,7 @@ package de.javagl.common.iteration;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -173,6 +174,34 @@ public class Iterables
         };
     }
     
+    /**
+     * Returns whether the given iterable is sorted according to the given
+     * comparator. Returns <code>true</code> if the sequence is empty.
+     * 
+     * @param iterable The iterable
+     * @param comparator The comparator
+     * @return Whether the iterable is sorted
+     */
+    public static <T> boolean isSorted(
+        Iterable<? extends T> iterable, Comparator<? super T> comparator)
+    {
+        Iterator<? extends T> iterator = iterable.iterator();
+        if (!iterator.hasNext())
+        {
+            return true;
+        }
+        T t0 = iterator.next();
+        while (iterator.hasNext())
+        {
+            T t1 = iterator.next();
+            if (comparator.compare(t0, t1) > 0)
+            {
+                return false;
+            }
+            t0 = t1;
+        }
+        return true;
+    }
     
 
     /**
