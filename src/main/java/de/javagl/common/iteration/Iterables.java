@@ -51,6 +51,7 @@ public class Iterables
      * the given iterable into a list
      * 
      * @param <T> The element type
+     * 
      * @param iterable The iterable
      * @return The list
      */
@@ -65,6 +66,7 @@ public class Iterables
      * the given iterable into a set
      * 
      * @param <T> The element type
+     * 
      * @param iterable The iterable
      * @return The set
      */
@@ -80,6 +82,7 @@ public class Iterables
      * 
      * @param <T> The element type
      * @param <C> The collection type
+     * 
      * @param iterable The iterable
      * @param collection The target collection
      * @return The given collection
@@ -98,6 +101,7 @@ public class Iterables
      * iterable. Fancy stuff, he?
      * 
      * @param <T> The element type
+     * 
      * @param iterablesIterable The iterable over the iterables. May not 
      * provide <code>null</code> iterables.
      * @return The iterator
@@ -126,6 +130,7 @@ public class Iterables
      * 
      * @param <S> The element type 
      * @param <T> The value type 
+     * 
      * @param iterable The delegate iterable
      * @param function The function
      * @return The iterator
@@ -153,6 +158,7 @@ public class Iterables
      * the given predicate applies.
      * 
      * @param <T> The element type 
+     * 
      * @param iterable The delegate iterable
      * @param predicate The predicate
      * @return The iterator
@@ -178,6 +184,8 @@ public class Iterables
      * Returns whether the given iterable is sorted according to the given
      * comparator. Returns <code>true</code> if the sequence is empty.
      * 
+     * @param <T> The element type
+     *  
      * @param iterable The iterable
      * @param comparator The comparator
      * @return Whether the iterable is sorted
