@@ -1,7 +1,7 @@
 /*
- * www.javagl.de
+ * www.javagl.de - Common
  *
- * Copyright (c) 2017-2019 Marco Hutter - http://www.javagl.de
+ * Copyright (c) 2012-2015 Marco Hutter - http://www.javagl.de
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,12 +27,16 @@
 package de.javagl.common.collections;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.IntUnaryOperator;
 
 import de.javagl.common.functional.TriFunction;
 
@@ -54,6 +58,51 @@ public class Lists
         extends AbstractList<T> implements RandomAccess
     {
         // No additional methods
+    }
+    
+    /**
+     * Utility method that returns an unmodifiable list with the given
+     * contents
+     * 
+     * @param <T> The type of the elements
+     * 
+     * @param input The input
+     * @return The result
+     */
+    public static <T> List<T> unmodifiableListWith(
+        Collection<? extends T> input)
+    {
+        if (input.isEmpty())
+        {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(new ArrayList<T>(input));
+    }
+    
+    /**
+     * Returns a list that is an unmodifiable <i>view</i> on the given array
+     * 
+     * @param array The array
+     * @return The list
+     */
+    public static List<Integer> fromArray(int ... array)
+    {
+        Objects.requireNonNull(array, "The array may not be null");
+        class ResultList extends AbstractList<Integer> implements RandomAccess
+        {
+            @Override
+            public Integer get(int index)
+            {
+                return array[index];
+            }
+            
+            @Override
+            public int size()
+            {
+                return array.length;
+            }
+        };
+        return new ResultList();
     }
     
     /**
@@ -547,6 +596,167 @@ public class Lists
             return withRandomAccess(view); 
         }
         return view;
+    }
+    
+    /**
+     * Create a <i>view</i> on the given list that contains only the elements
+     * that are indicated by the given indices.<br>
+     * <br>
+     * The returned list will me modifiable if and only if the given 
+     * parent is modifiable. The given list may not be modified after
+     * it has been passed to this method.
+     * 
+     * @param <T> The element type of the list
+     * 
+     * @param parent The parent list
+     * @param indices The indices
+     * @return The view
+     * @throws NullPointerException If any argument is <code>null</code>
+     */
+    public static <T> List<T> createIndexView(
+        List<T> parent, List<Integer> indices)
+    {
+        return createIndexView(parent, indices::get, indices.size());
+    }
+    
+    /**
+     * Create a <i>view</i> on the given list where each index will be
+     * passed through the given lookup function in order to access the
+     * corresponding element in the given parent list. The caller is 
+     * responsible for making sure that the lookup works properly 
+     * (i.e. it does not throw an exception for any argument).<br>
+     * <br>
+     * The returned list will me modifiable if and only if the given 
+     * parent is modifiable.
+     * 
+     * @param <T> The element type of the list
+     * 
+     * @param parent The parent list
+     * @param indexLookup The lookup
+     * @param size The size of the resulting list
+     * @return The view
+     * @throws NullPointerException If any argument is <code>null</code>
+     */
+    public static <T> List<T> createIndexView(
+        List<T> parent, IntUnaryOperator indexLookup, int size)
+    {
+        return new IndexViewList<T>(parent, indexLookup, size);
+    }
+    
+    /**
+     * Returns a list that consists of the elements of the given parent 
+     * that have the given indices.<br>
+     * <br>
+     * The caller is responsible to make sure that the given parameters
+     * are "consistent", meaning that the indices are valid for the given
+     * parent, and the indices and the parent are not modified in a way
+     * that violates this constraint.<br>
+     * <br>
+     * The returned list will me modifiable if and only if the given 
+     * parent is modifiable.
+     * 
+     * @param <T> The type of the elements
+     * 
+     * @param parent The parent list
+     * @param indices The indices
+     * @return The resulting list
+     * @throws NullPointerException If any argument is <code>null</code>
+     */
+    static <T> List<T> createIndexView(List<T> parent, int indices[])
+    {
+        Objects.requireNonNull(indices, "The indices may not be null");
+        return createIndexView(parent, i -> indices[i], indices.length);
+    }
+    
+    /**
+     * Create a new list that is an unmodifiable <i>view</i> on the 
+     * concatenation of the given lists.
+     * 
+     * @param <T> The type of the elements
+     * 
+     * @param list0 The first list
+     * @param list1 The second list
+     * @return The concatenated view
+     */
+    public static <T> List<T> concat(
+        List<? extends T> list0, List<? extends T> list1)
+    {
+        Objects.requireNonNull(list0, "The list0 may not be null");
+        Objects.requireNonNull(list1, "The list1 may not be null");
+        if (list0 instanceof RandomAccess && list1 instanceof RandomAccess)
+        {
+            return concatRandomAccess(list0, list1);
+        }
+        return concatDefault(list0, list1);
+        
+    }
+    
+    /**
+     * Create a new list that is an unmodifiable <i>view</i> on the 
+     * concatenation of the given lists, with random access.
+     * 
+     * @param <T> The type of the elements
+     * 
+     * @param list0 The first list
+     * @param list1 The second list
+     * @return The concatenated view
+     */
+    private static <T> List<T> concatRandomAccess(
+        List<? extends T> list0, List<? extends T> list1)
+    {
+        class ResultList extends AbstractList<T> implements RandomAccess
+        {
+            @Override
+            public T get(int index)
+            {
+                if (index < list0.size())
+                {
+                    return list0.get(index);
+                }
+                return list1.get(index - list0.size());
+            }
+            
+            @Override
+            public int size()
+            {
+                return list0.size() + list1.size();
+            }
+        };
+        return new ResultList();
+    }
+    
+    /**
+     * Create a new list that is an unmodifiable <i>view</i> on the 
+     * concatenation of the given lists, without random access.
+     * 
+     * @param <T> The type of the elements
+     * 
+     * @param list0 The first list
+     * @param list1 The second list
+     * @return The concatenated view
+     */
+    private static <T> List<T> concatDefault(
+        List<? extends T> list0, List<? extends T> list1)
+    {
+        class ResultList extends AbstractList<T>
+        {
+            @Override
+            public T get(int index)
+            {
+                if (index < list0.size())
+                {
+                    return list0.get(index);
+                }
+                return list1.get(index - list0.size());
+            }
+            
+            @Override
+            public int size()
+            {
+                return list0.size() + list1.size();
+            }
+        };
+        return new ResultList();
     }
     
     /**

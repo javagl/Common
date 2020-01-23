@@ -46,6 +46,55 @@ import de.javagl.common.util.Comparators;
 public class Maps
 {
     /**
+     * Create a map that is an index lookup for the given list. If the list
+     * contains duplicate elements, then the element will be mapped to the
+     * last index at which it appears.
+     * 
+     * @param <T> The element type
+     * 
+     * @param list The list
+     * @return The map
+     */
+    public static <T> Map<T, Integer> createIndexLookupUnchecked(
+        List<? extends T> list)
+    {
+        Map<T, Integer> map = new LinkedHashMap<T, Integer>();
+        for (int i = 0; i < list.size(); i++)
+        {
+            T element = list.get(i);
+            map.put(element, i);
+        }
+        return map;
+    }
+    
+    /**
+     * Create a map for looking up the indices of the elements in the given
+     * list.
+     * 
+     * @param <T> The element type
+     * 
+     * @param list The list
+     * @return The lookup
+     * @throws IllegalArgumentException If the list contains duplicate elements
+     */
+    public static <T> Map<T, Integer> createIndexLookup(
+        List<? extends T> list)
+    {
+        Map<T, Integer> map = new LinkedHashMap<T, Integer>();
+        for (int i = 0; i < list.size(); i++)
+        {
+            T t = list.get(i);
+            Integer previous = map.put(t, i);
+            if (previous != null)
+            {
+                throw new IllegalArgumentException("Duplicate element " + t
+                    + " at " + i + " and " + previous);
+            }
+        }
+        return map;
+    }
+    
+    /**
      * Combine the given maps, by merging their key sets to obtain the key
      * set of the result list, and collecting all values from the given
      * input maps into lists.
