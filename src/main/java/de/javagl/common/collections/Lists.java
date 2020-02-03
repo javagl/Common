@@ -375,99 +375,6 @@ public class Lists
     }
     
     /**
-     * Returns an unmodifiable list with the given size that contains the 
-     * values <code>offset + i * stepSize</code>
-     * 
-     * @param offset The offset
-     * @param stepSize The step size
-     * @param size The size
-     * @return The list
-     * @throws IllegalArgumentException If the size is negative
-     */
-    public static List<Integer> steps(int offset, int stepSize, int size) 
-    {
-        validateSize(size);
-        return new AbstractRandomAccessList<Integer>()
-        {
-
-            @Override
-            public Integer get(int index)
-            {
-                validateIndex(index, size());
-                return offset + stepSize * index;
-            }
-
-            @Override
-            public int size()
-            {
-                return size;
-            }
-        };
-    }
-    
-    /**
-     * Returns an unmodifiable list with the given size that contains the 
-     * values <code>offset + i * stepSize</code>
-     * 
-     * @param offset The offset
-     * @param stepSize The step size
-     * @param size The size
-     * @return The list
-     * @throws IllegalArgumentException If the size is negative
-     */
-    public static List<Long> steps(long offset, long stepSize, int size) 
-    {
-        validateSize(size);
-        return new AbstractRandomAccessList<Long>()
-        {
-
-            @Override
-            public Long get(int index)
-            {
-                validateIndex(index, size());
-                return offset + stepSize * index;
-            }
-
-            @Override
-            public int size()
-            {
-                return size;
-            }
-        };
-    }
-    
-    /**
-     * Returns an unmodifiable list with the given size that contains the 
-     * values <code>offset + i * stepSize</code>
-     * 
-     * @param offset The offset
-     * @param stepSize The step size
-     * @param size The size
-     * @return The list
-     * @throws IllegalArgumentException If the size is negative
-     */
-    public static List<Double> steps(double offset, double stepSize, int size) 
-    {
-        validateSize(size);
-        return new AbstractRandomAccessList<Double>()
-        {
-
-            @Override
-            public Double get(int index)
-            {
-                validateIndex(index, size());
-                return offset + stepSize * index;
-            }
-
-            @Override
-            public int size()
-            {
-                return size;
-            }
-        };
-    }
-    
-    /**
      * Creates an unmodifiable list that contains consecutive integers
      * in the given range
      * 
@@ -484,7 +391,7 @@ public class Lists
             throw new IllegalArgumentException("The minimum (" + min
                 + ") is greater than the maximum (" + max + ")");
         }
-        return steps(min, 1, max - min);
+        return createView(max - min, index -> min + index);
     }
 
     /**
@@ -504,7 +411,7 @@ public class Lists
             throw new IllegalArgumentException("The minimum (" + min
                 + ") is greater than the maximum (" + max + ")");
         }
-        return steps(min, 1L, (int)(max - min));
+        return createView((int)(max - min), index -> min + index);
     }
 
     /**
