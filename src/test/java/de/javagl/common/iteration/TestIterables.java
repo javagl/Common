@@ -7,15 +7,14 @@ package de.javagl.common.iteration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 
 @SuppressWarnings("javadoc")
@@ -39,7 +38,6 @@ public class TestIterables
         assertEquals(expected, actual1);
     }
     
-    @Rule public ExpectedException thrown= ExpectedException.none();    
     @Test
     public void testFiltering()
     {
@@ -54,17 +52,14 @@ public class TestIterables
         assertEquals(iterator0.next(), "2");
         assertFalse(iterator0.hasNext());
         
-        thrown.expect(NoSuchElementException.class);
-        iterator0.next();
+        assertThrows(NoSuchElementException.class, iterator0::next);
         
         Iterator<String> iterator1 = filteringIterable.iterator();
         assertEquals(iterator1.next(), "0");
         assertEquals(iterator1.next(), "2");
         assertFalse(iterator1.hasNext());
         
-        thrown.expect(NoSuchElementException.class);
-        iterator1.next();
-        
+        assertThrows(NoSuchElementException.class, iterator1::next);
     }
     
     @Test
@@ -78,8 +73,7 @@ public class TestIterables
         
         Iterator<String> iterator = filteringIterable.iterator();
         assertFalse(iterator.hasNext());
-        thrown.expect(NoSuchElementException.class);
-        iterator.next();
+        assertThrows(NoSuchElementException.class, iterator::next);
     }
     
 }

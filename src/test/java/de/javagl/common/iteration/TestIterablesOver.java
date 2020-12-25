@@ -7,15 +7,14 @@ package de.javagl.common.iteration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 @SuppressWarnings("javadoc")
 public class TestIterablesOver
@@ -39,7 +38,6 @@ public class TestIterablesOver
         assertEquals(expected, actual1);
     }
     
-    @Rule public ExpectedException thrown= ExpectedException.none();    
     @Test
     public void testIterableOverIteratorsExactCalls()
     {
@@ -61,7 +59,7 @@ public class TestIterablesOver
         assertEquals("D", iterator0.next());
         assertFalse(iterator0.hasNext());
 
-        thrown.expect(NoSuchElementException.class);
+        assertThrows(NoSuchElementException.class, iterator0::next);
         iterator0.next();
         
         Iterator<String> iterator1 = iterable.iterator();
@@ -71,7 +69,7 @@ public class TestIterablesOver
         assertEquals("D", iterator1.next());
         assertFalse(iterator1.hasNext());
         
-        thrown.expect(NoSuchElementException.class);
+        assertThrows(NoSuchElementException.class, iterator1::next);
         iterator1.next();
         
     }
