@@ -667,6 +667,132 @@ public class Lists
     }
     
     /**
+     * Returns a <i>view</i> on the given list, where the element with the
+     * given index is omitted.
+     * 
+     * @param <T> The element type
+     * 
+     * @param delegate The list
+     * @param omittedIndex The omitted index
+     * @return The list
+     * @throws IllegalArgumentException If the given index is negative
+     * or not smaller than the size of the given list
+     */
+    public static <T> List<T> withOmitted(
+        List<? extends T> delegate, int omittedIndex)
+    {
+        Objects.requireNonNull(delegate, "The delegate may not be null");
+        if (omittedIndex < 0 || omittedIndex >= delegate.size())
+        {
+            throw new IllegalArgumentException(
+                "The insertion index may not be negative and must be "
+                + "smaller than " + delegate.size() 
+                + ", but is " + omittedIndex);
+        }
+        class ResultList extends AbstractList<T>
+        {
+            @Override
+            public T get(int index)
+            {
+                if (index < omittedIndex)
+                {
+                    return delegate.get(index);
+                }
+                return delegate.get(index + 1);
+            }
+
+            @Override
+            public int size()
+            {
+                return delegate.size() - 1;
+            }
+        }
+        List<T> view = new ResultList();
+        if (delegate instanceof RandomAccess)
+        {
+            return withRandomAccess(view); 
+        }
+        return view;
+    }
+
+    /**
+     * Creates a <i>view</i> on the given list, with the given element
+     * added at the given index
+     * 
+     * @param <T> The element type
+     * 
+     * @param delegate The delegate list
+     * @param element The new element
+     * @param insertionIndex The insertion index
+     * @return The list
+     * @throws IllegalArgumentException If the given index is negative
+     * or larger than the size of the given list
+     */
+    public static <T> List<T> withAdded(
+        List<? extends T> delegate, T element, int insertionIndex)
+    {
+        Objects.requireNonNull(delegate, "The delegate may not be null");
+        if (insertionIndex < 0 || insertionIndex > delegate.size())
+        {
+            throw new IllegalArgumentException(
+                "The insertion index may not be negative and not be "
+                + "larger than " + delegate.size() 
+                + ", but is " + insertionIndex);
+        }
+        class ResultList extends AbstractList<T>
+        {
+            @Override
+            public T get(int index)
+            {
+                if (index < insertionIndex)
+                {
+                    return delegate.get(index);
+                }
+                if (index > insertionIndex)
+                {
+                    return delegate.get(index - 1);
+                }
+                return element;
+            }
+
+            @Override
+            public int size()
+            {
+                return delegate.size() + 1;
+            }
+        }
+        List<T> view = new ResultList();
+        if (delegate instanceof RandomAccess)
+        {
+            return withRandomAccess(view); 
+        }
+        return view;
+    }
+    
+    
+    /**
+     * Creates a new list with the same elements as the given one, and 
+     * additionally the given elements
+     * 
+     * @param <T> The element type
+     * 
+     * @param list The list
+     * @param elements The elements to add
+     * @return The list
+     */
+    @SafeVarargs
+    public static <T> List<T> add(List<? extends T> list, T ... elements)
+    {
+        List<T> result = new ArrayList<T>(list);
+        for (T element : elements)
+        {
+            result.add(element);
+        }
+        return result;
+    }
+    
+    
+    /**
      * Make sure that the given size is not negative, and throw an
      * <code>IllegalArgumentException</code> otherwise
      * 
