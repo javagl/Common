@@ -60,7 +60,6 @@ public class TestIterablesOver
         assertFalse(iterator0.hasNext());
 
         assertThrows(NoSuchElementException.class, iterator0::next);
-        iterator0.next();
         
         Iterator<String> iterator1 = iterable.iterator();
         assertEquals("A", iterator1.next());
@@ -70,7 +69,5 @@ public class TestIterablesOver
         assertFalse(iterator1.hasNext());
         
         assertThrows(NoSuchElementException.class, iterator1::next);
-        iterator1.next();
-        
     }
 }

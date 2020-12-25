@@ -148,7 +148,6 @@ public class TestIteratorsOver
         assertFalse(iterator.hasNext());
         
         assertThrows(NoSuchElementException.class, iterator::next);
-        iterator.next();
     }
     
     
